@@ -1,8 +1,8 @@
 from google.cloud import aiplatform
 
 # Set your project ID and model ID
-project_id = "your-project-id"
-model_id = "your-model-id"
+project_id = "machine-learning-427708"
+model_id = "random_forest_model.pkl"
 
 # Initialize the Vertex AI client
 client = aiplatform.gapic.EndpointServiceClient(client_options={"api_endpoint": "us-central1-aiplatform.googleapis.com"})
@@ -10,7 +10,7 @@ client = aiplatform.gapic.EndpointServiceClient(client_options={"api_endpoint": 
 # Define the deployment parameters
 deployed_model = aiplatform.gapic.DeployedModel(
     model=aiplatform.gapic.ModelName(project=project_id, location="us-central1", model=model_id),
-    display_name="my-model",
+    display_name="rf_model",
 )
 
 # Deploy the model to an endpoint
