@@ -45,7 +45,6 @@ jobs:
           docker build -t model-img .
           docker images
           docker tag model-img us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
-          docker images
           docker push us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
 
     - name: Deploy to vertex
