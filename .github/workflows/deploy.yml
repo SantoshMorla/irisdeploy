@@ -3,7 +3,7 @@ name: Build and Deploy to Azure
 on:
   push:
     branches:
-      - main
+      -test
 
 jobs:
   build-and-deploy:
@@ -22,31 +22,32 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install azureml-core azureml-sdk
+        pip install   google-cloud-aiplatform
 
-    - name: Log in to Azure CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Set up Azure CLI
-      run: |
-        az acr login --name ${{ secrets.ACR_NAME }}
-    - name: Docker Login
-      uses: azure/docker-login@v1
+    - name: install the gcloud cli
+      uses: google-github-actions/setup-gcloud@v2
       with:
-        login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+          
     - name: Modify the model
       run: |
         python model.py
-        
-    - name: Build and push Docker image
+    
+    - name: build and push the docker image
+      env:
+          GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
       run: |
-        docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/my-app:${{ github.sha }} .
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/my-app:${{ github.sha }}
+          gcloud auth configure-docker us-docker.pkg.dev
+          docker build -t model-img .
+          docker images
+          docker tag model-img us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
+          docker images
+          docker push us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
 
-    - name: Deploy to Azure ML
+    - name: Deploy to vertex
       run: |
-        python deploy_to_aml.py
+        python deploy-to-vertex.py
