@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Iris Classification Prediction</title>
+  <style>
+    /* CSS styles omitted for brevity */
+  </style>
+</head>
+<body>
+  <h1>Iris Classification Prediction</h1>
+  <form id="prediction-form" action="{{ url_for('predict') }}" method="post">
+    <input type="number" id="sepal-length" name="sepal-length" placeholder="Sepal Length" required>
+    <input type="number" id="sepal-width" name="sepal-width" placeholder="Sepal Width" required>
+    <input type="number" id="petal-length" name="petal-length" placeholder="Petal Length" required>
+    <input type="number" id="petal-width" name="petal-width" placeholder="Petal Width" required>
+    <button type="submit">Predict</button>
+  </form>
+  <div id="result">{{ prediction }}</div>
+</body>
+</html>

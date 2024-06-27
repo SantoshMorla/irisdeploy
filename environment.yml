@@ -1,0 +1,11 @@
+name: myenv
+dependencies:
+  - python=3.8
+  - pip:
+    - flask
+    - pandas
+    - numpy
+    - scikit-learn
+    - azureml-core
+    - azureml-sdk
+    - azureml-defaults
