@@ -1,0 +1,53 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches:
+      -test
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install   google-cloud-aiplatform
+
+
+    - name: install the gcloud cli
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+          
+    - name: Modify the model
+      run: |
+        python model.py
+    
+    - name: build and push the docker image
+      env:
+          GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+      run: |
+          gcloud auth configure-docker us-docker.pkg.dev
+          docker build -t model-img .
+          docker images
+          docker tag model-img us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
+          docker images
+          docker push us-central1-docker.pkg.dev/machine-learning-427708/model-repo/demo-test-1
+
+    - name: Deploy to vertex
+      run: |
+        python deploy-to-vertex.py
