@@ -1,4 +1,4 @@
-# Import necessary libraries
+# Import necessary librarie
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -30,7 +30,7 @@ model_filename = 'random_forest_model.pkl'
 if os.path.exists(model_filename):
     print(f"{model_filename} already exists and will be replaced.")
 
-# Save the model to a .pkl file (this will overwrite the existing file)
+# Save the model to a .pkl file (this line of code will overwrite the existing file)
 with open(model_filename, 'wb') as file:
     pickle.dump(model, file)
 print(f"Model saved as {model_filename}")
